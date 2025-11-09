@@ -1,0 +1,105 @@
+初始化專案：
+npx create-next-app@latest --typescript --tailwind --eslint --app --src-dir --import-alias "@/*"
+
+這個指令會：
+初始化 Next.js 專案
+使用 TypeScript
+設定 Tailwind CSS
+啟用 ESLint
+使用 App Router (最新架構)
+使用 src/ 目錄結構
+設定 @/* 導入別名
+
+然後
+cd ai-knowledge-vault
+npm run dev 
+應該會看到歡迎畫面
+
+===================================================================================================
+
+# 在 src/ 目錄下建立需要的資料夾
+mkdir -p src/app/{login,dashboard,analyze,history}
+mkdir -p src/app/api/{auth,ai,billing}
+mkdir -p src/components/{ui,auth,dashboard,analyze}
+mkdir -p src/lib
+mkdir -p src/types
+mkdir -p src/hooks
+
+# 在根目錄建立後端和基礎設施資料夾
+mkdir -p backend/{auth,ai,billing}
+mkdir -p infra/{modules/{auth,api-gateway,lambda,database,cache,storage,monitoring},environments/{dev,staging,prod}}
+mkdir scripts
+
+===================================================================================================
+
+touch src/types/index.ts # 定義基礎型別
+touch .env.example ＃ 這是給其他開發者看需要準備什麼變量
+cp .env.example .env ＃ 複製一樣的格式來儲存真實的api key與secrete
+然後編輯 .env 填入真實的 API keys（這個檔案不會上傳）
+
+🔑 API Keys 取得指南
+1. OpenAI API Key
+步驟：
+前往 OpenAI Platform
+註冊/登入帳號
+點擊右上角頭像 → "View API keys"
+點擊 "Create new secret key"
+複製 sk-... 開頭的 key
+💰 費用： 按使用量計費，新用戶通常有 $5 免費額度
+
+
+
+2. Google OAuth (認證用)
+步驟：
+前往 Google Cloud Console
+建立新專案或選擇現有專案
+啟用 "Google+ API" 和 "OAuth 2.0"
+前往 "APIs & Services" → "Credentials"
+點擊 "Create Credentials" → "OAuth 2.0 Client ID"
+選擇 "Web application"
+設定 Authorized redirect URIs: http://localhost:3000/api/auth/callback/google
+
+3. Stripe (付費功能)
+步驟：
+前往 Stripe
+註冊帳號
+在 Dashboard → "Developers" → "API keys"
+複製 Publishable key 和 Secret key (測試模式)
+Webhook secret 稍後設定 webhook 時會產生
+
+4. NextAuth Secret
+產生方式：
+# 方法1: 使用 openssl
+openssl rand -base64 32
+# 方法2: 使用 Node.js
+node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
+把密碼貼到環境設定檔
+然後安裝必要套件
+npm install next-auth @next-auth/prisma-adapter openai lucide-react clsx tailwind-merge
+
+5. AWS 配置 (稍後 Terraform 時需要)
+步驟：
+前往 AWS Console
+註冊帳號 (需要信用卡，但有免費方案)
+IAM → Users → Create User → Attach policies (給AdministratorAccess就有全部)
+生成 Access Key
+
+
+
+===================================================================================================
+
+✅ NextAuth 認證系統設定完成 (2024-11-09)：
+✅ 1. 建立 NextAuth API route: src/app/api/auth/[...nextauth]/route.ts
+✅ 2. 建立 AuthProvider 組件: src/components/auth/AuthProvider.tsx
+✅ 3. 更新 layout.tsx 加入 AuthProvider
+✅ 4. 建立登入頁面: src/app/login/page.tsx (含 Google OAuth 按鈕)
+✅ 5. 建立 Dashboard 頁面: src/app/dashboard/page.tsx
+✅ 6. TypeScript 型別定義已存在
+
+🧪 下一步測試：
+1. 執行 npm run dev
+2. 訪問 http://localhost:3000/login
+3. 測試 Google 登入功能
+4. 登入成功後檢查 Dashboard 功能
+
+===================================================================================================
